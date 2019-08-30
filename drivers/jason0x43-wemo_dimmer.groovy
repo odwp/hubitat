@@ -83,13 +83,11 @@ def parse(description) {
         if (body?.property?.TimeSyncRequest?.text()) {
             debugLog('parse: Got TimeSyncRequest')
             result << syncTime()
-        } 
-        else if (body?.Body?.SetBinaryStateResponse?.BinaryState?.text()) {
+        } else if (body?.Body?.SetBinaryStateResponse?.BinaryState?.text()) {
             def rawValue = body.Body.SetBinaryStateResponse.BinaryState.text()
             debugLog("parse: Got SetBinaryStateResponse = ${rawValue}")
             result << createBinaryStateEvent(rawValue)
-        } 
-        else if (body?.property?.BinaryState?.text()) {
+        } else if (body?.property?.BinaryState?.text()) {
             def rawValue = body.property.BinaryState.text()
             debugLog("parse: Notify: BinaryState = ${rawValue}")
             result << createBinaryStateEvent(rawValue)
@@ -99,11 +97,14 @@ def parse(description) {
                 debugLog("parse: Notify: brightness = ${rawValue}")
                 result << createLevelEvent(rawValue)
             }
-        } 
-        else if (body?.property?.TimeZoneNotification?.text()) {
+        } else if (body?.property?.LongPress?.text()) {
+            def rawValue = body.property.LongPress.text()
+            debugLog("parse: Notify: LongPress = ${rawValue}")
+            result << createLongPressEvent(rawValue)
+            }
+        } else if (body?.property?.TimeZoneNotification?.text()) {
             debugLog("parse: Notify: TimeZoneNotification = ${body.property.TimeZoneNotification.text()}")
-        } 
-        else if (body?.Body?.GetBinaryStateResponse?.BinaryState?.text()) {
+        } else if (body?.Body?.GetBinaryStateResponse?.BinaryState?.text()) {
             def rawValue = body.Body.GetBinaryStateResponse.BinaryState.text()
             debugLog("parse: GetBinaryResponse: BinaryState = ${rawValue}")
             result << createBinaryStateEvent(rawValue)
@@ -189,7 +190,7 @@ private createLongPressEvent(rawValue) {
     if (value == '1') {
         createEvent(
         name: 'momentary',
-        descriptionText: "Long press sent"
+        descriptionText: "Long press occured"
     )
     }
 }
